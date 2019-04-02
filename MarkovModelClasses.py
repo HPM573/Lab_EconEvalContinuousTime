@@ -34,15 +34,10 @@ class Patient:
 
             # stop if time to next event (dt) is None
             if dt is None:
-                if_stop = True
 
             # else if  the next event occurs beyond simulation length
             elif dt + t > sim_length:
-                if_stop = True
-                # collect cost and health outcomes
-                self.stateMonitor.costUtilityMonitor.update(time=sim_length,
-                                                            current_state=self.stateMonitor.currentState,
-                                                            next_state=self.stateMonitor.currentState)
+
             else:
                 # advance time to the time of next event
                 t += dt
@@ -107,16 +102,8 @@ class PatientCostUtilityMonitor:
         """
 
         # cost and utility (per unit of time) during the period since the last recording until now
-        cost = self.params.annualStateCosts[current_state.value] + self.params.annualTreatmentCost
-        utility = self.params.annualStateUtilities[current_state.value]
 
         # discounted cost and utility (continuously compounded)
-        discounted_cost = Econ.pv_continuous_payment(payment=cost,
-                                                     discount_rate=self.params.discountRate,
-                                                     discount_period=(self.tLastRecorded, time))
-        discounted_utility = Econ.pv_continuous_payment(payment=utility,
-                                                        discount_rate=self.params.discountRate,
-                                                        discount_period=(self.tLastRecorded, time))
 
         # update total discounted cost and utility
         self.totalDiscountedCost += discounted_cost
